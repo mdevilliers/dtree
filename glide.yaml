@@ -1,0 +1,4 @@
+package: github.com/mdevilliers/dtree
+import:
+- package: github.com/go-yaml/yaml
+  version: ^2.1.1
