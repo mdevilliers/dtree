@@ -1,6 +1,14 @@
-hash: 9d438e9334668d07e6f49605e178386535e81a393730924cab2015d27f1546c0
-updated: 2018-03-12T17:35:17.704953372Z
+hash: aa7a1c7b4ef747b16463019ba3b4dc6a31f6b1e1a08156764abe091063791908
+updated: 2018-03-18T15:27:32.133257585Z
 imports:
 - name: github.com/go-yaml/yaml
   version: 7f97868eec74b32b0982dd158a51a446d1da7eb5
+- name: github.com/inconshreveable/mousetrap
+  version: 76626ae9c91c4f2a10f34cad8ce83ea42c93bb75
+- name: github.com/kelseyhightower/envconfig
+  version: f611eb38b3875cc3bd991ca91c51d06446afa14c
+- name: github.com/spf13/cobra
+  version: c6c44e6fdcc30161c7f4480754da7230d01c06e3
+- name: github.com/spf13/pflag
+  version: e57e3eeb33f795204c1ca35f56c44f83227c6e66
 testImports: []
