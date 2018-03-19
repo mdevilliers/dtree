@@ -13,6 +13,10 @@ func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo {
 	return &repo{nodes: nodes, edges: edges}
 }
 
+func (r *repo) All() ([]dtree.Node, []dtree.Edge) {
+	return r.nodes, r.edges
+}
+
 // naughty
 var seen = map[string]bool{}
 

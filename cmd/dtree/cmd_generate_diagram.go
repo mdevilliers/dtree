@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -26,10 +27,14 @@ var generateDiagramCommand = &cobra.Command{
 		var nn []dtree.Node
 		var ee []dtree.Edge
 
-		if !_config.Reverse {
-			nn, ee = store.FromNode(_config.Focus)
+		if _config.Focus == "" {
+			return errors.New("specify a focus - tree cannot be displayed")
 		} else {
-			nn, ee = store.ToNode(_config.Focus)
+			if !_config.Reverse {
+				nn, ee = store.FromNode(_config.Focus)
+			} else {
+				nn, ee = store.ToNode(_config.Focus)
+			}
 		}
 
 		postProcessNodes(nn)
@@ -55,6 +60,7 @@ var generateDiagramCommand = &cobra.Command{
 		}
 
 		now := time.Now()
+
 		fileName := fmt.Sprintf("./output_%s_%v.svg", _config.Focus, now.Unix())
 		fileName = strings.Replace(fileName, "/", "_", -1)
 

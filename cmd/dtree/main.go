@@ -12,15 +12,11 @@ var rootCmd = &cobra.Command{
 	Use: "dtree",
 }
 
-/*
-go build && ./dtree XXXXX > example.dot && dot -Tsvg example.dot > example.svg
-*/
-
 var _config = newConfig()
 
 type config struct {
 	Root    string `envconfig:"ROOT" default:"/home/mark/go/src/github.com/karhoo/"`
-	Focus   string `envconfig:"FOCUS" default:"api-v1-estimates"`
+	Focus   string `envconfig:"FOCUS"`
 	Reverse bool   `envconfig:"REVERSE" default:"false"`
 }
 

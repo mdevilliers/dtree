@@ -10,6 +10,7 @@ import (
 )
 
 type storer interface {
+	All() ([]dtree.Node, []dtree.Edge)
 	FromNode(focus string) ([]dtree.Node, []dtree.Edge)
 	ToNode(focus string) ([]dtree.Node, []dtree.Edge)
 	GroupAll() map[string][]dtree.Edge
