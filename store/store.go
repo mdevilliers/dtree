@@ -32,6 +32,7 @@ func (r *repo) FromNode(name string) ([]dtree.Node, []dtree.Edge) {
 			edges = append(edges, e)
 
 			_, f := seen[e.Target.Name]
+
 			if !f {
 
 				n2, e2 := r.FromNode(e.Target.Name)
@@ -66,6 +67,26 @@ func (r *repo) ToNode(name string) ([]dtree.Node, []dtree.Edge) {
 		}
 	}
 	return mapToArr(nodes), edges
+
+}
+
+func (r *repo) GroupAll() map[string][]dtree.Edge {
+
+	ret := map[string][]dtree.Edge{}
+	for _, e := range r.edges {
+
+		if e.Relationship == dtree.Dependancy {
+			n := e.Target.Name
+			_, contains := ret[n]
+			if !contains {
+				ret[n] = []dtree.Edge{e}
+			} else {
+				ret[n] = append(ret[n], e)
+			}
+		}
+	}
+
+	return ret
 
 }
 
