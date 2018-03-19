@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"os"
+	"io/ioutil"
+	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/mdevilliers/dtree"
 	"github.com/spf13/cobra"
@@ -32,8 +34,39 @@ var generateDiagramCommand = &cobra.Command{
 
 		postProcessNodes(nn)
 
-		return writeDot(nn, ee, os.Stdout)
+		dotfile, err := ioutil.TempFile("", "dtree_")
 
+		if err != nil {
+			return err
+		}
+
+		defer dotfile.Close()
+
+		err = writeDot(nn, ee, dotfile)
+
+		if err != nil {
+			return err
+		}
+
+		data, err := executeCommand(fmt.Sprintf("dot -Tsvg %s", dotfile.Name()))
+
+		if err != nil {
+			return err
+		}
+
+		now := time.Now()
+		fileName := fmt.Sprintf("./output_%s_%v.svg", _config.Focus, now.Unix())
+		fileName = strings.Replace(fileName, "/", "_", -1)
+
+		err = ioutil.WriteFile(fileName, data, 0644)
+
+		if err != nil {
+			return err
+		}
+
+		_, err = executeCommand(fmt.Sprintf("xdg-open %s", fileName))
+
+		return err
 	},
 }
 
@@ -105,4 +138,12 @@ func postProcessNodes(nodes []dtree.Node) {
 			n.Labels[typeStr] = Default
 		}
 	}
+}
+
+func executeCommand(cmd string) ([]byte, error) {
+	out, err := exec.Command("sh", "-c", cmd).Output()
+	if err != nil {
+		return []byte{}, err
+	}
+	return out, nil
 }
