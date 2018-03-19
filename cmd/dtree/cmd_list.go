@@ -10,15 +10,21 @@ import (
 
 var listCommand = &cobra.Command{
 	Use:   "ls",
-	Short: "List dependancies.",
+	Short: "list versions and dependancies for a package.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		store, err := InitStore(_config)
+		store, err := initStore(_config)
 		if err != nil {
 			return err
 		}
 
-		grouped := store.GroupAll()
+		var grouped map[string][]dtree.Edge
+
+		if _config.Focus == "" {
+			grouped = store.GroupAll()
+		} else {
+			grouped = store.GroupOn(_config.Focus)
+		}
 
 		for k, g := range grouped {
 

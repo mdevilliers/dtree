@@ -19,7 +19,7 @@ var generateDiagramCommand = &cobra.Command{
 	Short: "Generate a dependancy diagram.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
-		store, err := InitStore(_config)
+		store, err := initStore(_config)
 		if err != nil {
 			return err
 		}

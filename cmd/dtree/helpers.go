@@ -14,9 +14,10 @@ type storer interface {
 	FromNode(focus string) ([]dtree.Node, []dtree.Edge)
 	ToNode(focus string) ([]dtree.Node, []dtree.Edge)
 	GroupAll() map[string][]dtree.Edge
+	GroupOn(focus string) map[string][]dtree.Edge
 }
 
-func InitStore(cfg *config) (storer, error) {
+func initStore(cfg *config) (storer, error) {
 
 	all, err := repo.FromCheckedOut(cfg.Root).Paths()
 

@@ -20,12 +20,12 @@ func (r *repo) All() ([]dtree.Node, []dtree.Edge) {
 // naughty
 var seen = map[string]bool{}
 
+//FromNode starts at this node and return all dependancies recursively
 func (r *repo) FromNode(name string) ([]dtree.Node, []dtree.Edge) {
 
 	nodes := map[string]dtree.Node{}
 	edges := []dtree.Edge{}
 
-	// start at this node - return all dependancies and theirs ect
 	for _, e := range r.edges {
 
 		if e.Relationship == dtree.Dependancy && e.Source.Name == name {
@@ -56,6 +56,7 @@ func (r *repo) FromNode(name string) ([]dtree.Node, []dtree.Edge) {
 
 }
 
+// ToNode finds all dependancies looking at this node
 func (r *repo) ToNode(name string) ([]dtree.Node, []dtree.Edge) {
 
 	nodes := map[string]dtree.Node{}
@@ -71,9 +72,9 @@ func (r *repo) ToNode(name string) ([]dtree.Node, []dtree.Edge) {
 		}
 	}
 	return mapToArr(nodes), edges
-
 }
 
+// GroupAll returns all dependancies grouped by version
 func (r *repo) GroupAll() map[string][]dtree.Edge {
 
 	ret := map[string][]dtree.Edge{}
@@ -89,9 +90,25 @@ func (r *repo) GroupAll() map[string][]dtree.Edge {
 			}
 		}
 	}
-
 	return ret
+}
 
+// GroupOn returns dependancies for grouped by version for a module
+func (r *repo) GroupOn(name string) map[string][]dtree.Edge {
+
+	all := r.GroupAll()
+
+	ret := map[string][]dtree.Edge{}
+
+	for k, _ := range all {
+
+		if k == name {
+			ret[k] = all[k]
+			break
+		}
+
+	}
+	return ret
 }
 
 func mapToArr(m map[string]dtree.Node) []dtree.Node {
