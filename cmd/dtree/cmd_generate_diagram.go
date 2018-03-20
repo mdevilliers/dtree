@@ -61,7 +61,7 @@ var generateDiagramCommand = &cobra.Command{
 
 		now := time.Now()
 
-		fileName := fmt.Sprintf("./output_%s_%v.svg", _config.Focus, now.Unix())
+		fileName := fmt.Sprintf("output_%s_%v.svg", _config.Focus, now.Unix())
 		fileName = strings.Replace(fileName, "/", "_", -1)
 
 		err = ioutil.WriteFile(fileName, data, 0644)
