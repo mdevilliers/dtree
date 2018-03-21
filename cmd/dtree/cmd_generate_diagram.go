@@ -37,43 +37,47 @@ var generateDiagramCommand = &cobra.Command{
 			}
 		}
 
-		postProcessNodes(nn)
-
-		dotfile, err := ioutil.TempFile("", "dtree_")
-
-		if err != nil {
-			return err
-		}
-
-		defer dotfile.Close()
-
-		err = writeDot(nn, ee, dotfile)
-
-		if err != nil {
-			return err
-		}
-
-		data, err := executeCommand(fmt.Sprintf("dot -Tsvg %s", dotfile.Name()))
-
-		if err != nil {
-			return err
-		}
-
-		now := time.Now()
-
-		fileName := fmt.Sprintf("output_%s_%v.svg", _config.Focus, now.Unix())
-		fileName = strings.Replace(fileName, "/", "_", -1)
-
-		err = ioutil.WriteFile(fileName, data, 0644)
-
-		if err != nil {
-			return err
-		}
-
-		_, err = executeCommand(fmt.Sprintf("xdg-open %s", fileName))
-
+		err = outputImage(nn, ee)
 		return err
 	},
+}
+
+func outputImage(n []dtree.Node, e []dtree.Edge) error {
+	dotfile, err := ioutil.TempFile("", "dtree_")
+
+	if err != nil {
+		return err
+	}
+
+	defer dotfile.Close()
+
+	err = writeDot(n, e, dotfile)
+
+	if err != nil {
+		return err
+	}
+
+	data, err := executeCommand(fmt.Sprintf("dot -Tsvg %s", dotfile.Name()))
+
+	if err != nil {
+		return err
+	}
+
+	now := time.Now()
+
+	fileName := fmt.Sprintf("output_%s_%v.svg", _config.Focus, now.Unix())
+	fileName = strings.Replace(fileName, "/", "_", -1)
+
+	err = ioutil.WriteFile(fileName, data, 0644)
+
+	if err != nil {
+		return err
+	}
+
+	_, err = executeCommand(fmt.Sprintf("xdg-open %s", fileName))
+
+	return err
+
 }
 
 func writeDot(nodes []dtree.Node, edges []dtree.Edge, writer io.Writer) error {
@@ -89,16 +93,12 @@ func writeDot(nodes []dtree.Node, edges []dtree.Edge, writer io.Writer) error {
 
 		fillcolor := "white"
 
-		typez := node.Labels["type"]
-
-		switch typez {
-		case KarhooAPI:
+		if isKarhooAPI(node.Name) {
 			fillcolor = "blue"
-		case KarhooSvc:
+		} else if isKarhooSvc(node.Name) {
 			fillcolor = "red"
-		case KarhooLibrary:
+		} else if isKarhooLib(node.Name) {
 			fillcolor = "green"
-
 		}
 
 		buf.WriteString(fmt.Sprintf(`"%s" [fillcolor=%s style=filled];`, node.Name, fillcolor))
@@ -108,15 +108,6 @@ func writeDot(nodes []dtree.Node, edges []dtree.Edge, writer io.Writer) error {
 	_, err := writer.Write(buf.Bytes())
 	return err
 }
-
-type dependancyType string
-
-var (
-	Default       = dependancyType("DEFAULT")
-	KarhooLibrary = dependancyType("LIB")
-	KarhooSvc     = dependancyType("SVC")
-	KarhooAPI     = dependancyType("API")
-)
 
 func isKarhooSvc(name string) bool {
 	return strings.Contains(name, "svc") && strings.Contains(name, "karhoo")
@@ -128,22 +119,6 @@ func isKarhooLib(name string) bool {
 
 func isKarhooAPI(name string) bool {
 	return strings.Contains(name, "api-v1") && strings.Contains(name, "karhoo")
-}
-
-func postProcessNodes(nodes []dtree.Node) {
-
-	typeStr := "type"
-	for _, n := range nodes {
-		if isKarhooSvc(n.Name) {
-			n.Labels[typeStr] = KarhooSvc
-		} else if isKarhooLib(n.Name) {
-			n.Labels[typeStr] = KarhooLibrary
-		} else if isKarhooAPI(n.Name) {
-			n.Labels[typeStr] = KarhooAPI
-		} else {
-			n.Labels[typeStr] = Default
-		}
-	}
 }
 
 func executeCommand(cmd string) ([]byte, error) {

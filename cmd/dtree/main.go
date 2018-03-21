@@ -36,6 +36,7 @@ func (o *config) addFlags(fs *pflag.FlagSet) {
 func init() {
 	rootCmd.AddCommand(generateDiagramCommand)
 	rootCmd.AddCommand(listCommand)
+	rootCmd.AddCommand(grepCommand)
 	_config.addFlags(rootCmd.PersistentFlags())
 }
 
