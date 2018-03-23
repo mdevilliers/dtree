@@ -30,7 +30,13 @@ func initStore(cfg *config) (storer, error) {
 
 	for _, r := range all {
 
-		nodes, edges, err := parsers.Glide().Parse(r.Path)
+		parser, err := parsers.New(r.Path)
+		if err != nil {
+			log.Println("error :", r, err)
+			continue
+		}
+
+		nodes, edges, err := parser.Parse(r.Path)
 
 		if err != nil {
 			log.Println("error parsing : ", r, err)
