@@ -1,15 +1,17 @@
 package main
 
 import (
-	"strings"
+	"errors"
 
 	"github.com/mdevilliers/dtree"
 	"github.com/spf13/cobra"
 )
 
+var usageStr = "grep [TERM]"
+
 var grepCommand = &cobra.Command{
-	Use:   "grep [TERM]",
-	Short: "grep for a versions and dependancies for a package.",
+	Use:   usageStr,
+	Short: "grep for versions and dependancies of a package.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
 		store, err := initStore(_config)
@@ -18,18 +20,19 @@ var grepCommand = &cobra.Command{
 		}
 
 		fragment := args[0]
-		nodes, _ := store.All()
 
-		matches := []string{}
-
-		for _, node := range nodes {
-			if strings.Contains(node.Name, fragment) {
-				matches = append(matches, node.Name)
-			}
+		if fragment == "" {
+			return errors.New(usageStr)
 		}
 
-		var nn []dtree.Node
-		var ee []dtree.Edge
+		matches, err := store.FindNodes(fragment)
+
+		if err != nil {
+			return err
+		}
+
+		nn := []dtree.Node{}
+		ee := []dtree.Edge{}
 
 		for _, match := range matches {
 			if !_config.Reverse {
@@ -43,8 +46,13 @@ var grepCommand = &cobra.Command{
 				ee = append(ee, e...)
 			}
 		}
-		err = outputImage(nn, ee)
-		return err
+
+		if _config.ToDot {
+			return outputDot(fragment, nn, ee)
+		} else if _config.ToSvg {
+			return outputSvg(fragment, nn, ee)
+		}
+		return errors.New("no output configured.")
 
 	},
 }

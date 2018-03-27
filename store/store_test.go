@@ -1,31 +1,44 @@
 package store
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/mdevilliers/dtree"
+	"github.com/stretchr/testify/assert"
 )
 
-func Test_Group(t *testing.T) {
+func Test_FindNodes(t *testing.T) {
 
 	// A
 	// | \
-	// B  C
+	// BB CB
 
 	a := dtree.RootNode("A")
-	b := dtree.NewNode("B", "1.0")
-	c := dtree.NewNode("C", "2.0")
+	b := dtree.NewNode("BB", "1.0")
+	c := dtree.NewNode("CB", "2.0")
 
 	nodes := []dtree.Node{a, b, c}
 
-	e1 := dtree.NewDependancy(a, b, "1.0")
-	e2 := dtree.NewDependancy(a, c, "2.0")
+	s := InMemory(nodes, []dtree.Edge{})
 
-	edges := append(e1, e2...)
+	n, err := s.FindNodes("A")
 
-	s := InMemory(nodes, edges)
+	assert.Nil(t, err)
+	assert.Len(t, n, 1)
 
-	fmt.Println(s)
-	fmt.Println(s.Group())
+	n, err = s.FindNodes("AB")
+
+	assert.Nil(t, err)
+	assert.Len(t, n, 0)
+
+	n, err = s.FindNodes("B")
+
+	assert.Nil(t, err)
+	assert.Len(t, n, 2)
+
+	n, err = s.FindNodes("does-not-exist")
+
+	assert.Nil(t, err)
+	assert.Len(t, n, 0)
+
 }

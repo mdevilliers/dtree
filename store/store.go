@@ -1,6 +1,8 @@
 package store
 
 import (
+	"strings"
+
 	"github.com/mdevilliers/dtree"
 )
 
@@ -13,22 +15,38 @@ func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo {
 	return &repo{nodes: nodes, edges: edges}
 }
 
-func (r *repo) All() ([]dtree.Node, []dtree.Edge) {
-	return r.nodes, r.edges
+func (r *repo) FindNodes(name string) ([]dtree.Node, error) {
+
+	matches := []dtree.Node{}
+
+	for _, n := range r.nodes {
+
+		if name == n.Name {
+			matches = append(matches, n)
+			continue
+		}
+
+		if strings.Contains(n.Name, name) {
+			matches = append(matches, n)
+			continue
+		}
+	}
+
+	return matches, nil
 }
 
 // naughty
 var seen = map[string]bool{}
 
 //FromNode starts at this node and return all dependancies recursively
-func (r *repo) FromNode(name string) ([]dtree.Node, []dtree.Edge) {
+func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 	nodes := map[string]dtree.Node{}
 	edges := []dtree.Edge{}
 
 	for _, e := range r.edges {
 
-		if e.Relationship == dtree.Dependancy && e.Source.Name == name {
+		if e.Relationship == dtree.Dependancy && e.Source.Name == node.Name {
 
 			nodes[e.Source.Name] = e.Source
 			nodes[e.Target.Name] = e.Target
@@ -39,7 +57,7 @@ func (r *repo) FromNode(name string) ([]dtree.Node, []dtree.Edge) {
 
 			if !f {
 
-				n2, e2 := r.FromNode(e.Target.Name)
+				n2, e2 := r.FromNode(e.Target)
 
 				for _, n := range n2 {
 					nodes[n.Name] = n
@@ -57,14 +75,14 @@ func (r *repo) FromNode(name string) ([]dtree.Node, []dtree.Edge) {
 }
 
 // ToNode finds all dependancies looking at this node
-func (r *repo) ToNode(name string) ([]dtree.Node, []dtree.Edge) {
+func (r *repo) ToNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 	nodes := map[string]dtree.Node{}
 	edges := []dtree.Edge{}
 
 	for _, e := range r.edges {
 
-		if e.Relationship == dtree.Dependant && e.Target.Name == name {
+		if e.Relationship == dtree.Dependant && e.Target.Name == node.Name {
 
 			nodes[e.Source.Name] = e.Source
 
@@ -72,43 +90,6 @@ func (r *repo) ToNode(name string) ([]dtree.Node, []dtree.Edge) {
 		}
 	}
 	return mapToArr(nodes), edges
-}
-
-// GroupAll returns all dependancies grouped by version
-func (r *repo) GroupAll() map[string][]dtree.Edge {
-
-	ret := map[string][]dtree.Edge{}
-	for _, e := range r.edges {
-
-		if e.Relationship == dtree.Dependancy {
-			n := e.Target.Name
-			_, contains := ret[n]
-			if !contains {
-				ret[n] = []dtree.Edge{e}
-			} else {
-				ret[n] = append(ret[n], e)
-			}
-		}
-	}
-	return ret
-}
-
-// GroupOn returns dependancies for grouped by version for a module
-func (r *repo) GroupOn(name string) map[string][]dtree.Edge {
-
-	all := r.GroupAll()
-
-	ret := map[string][]dtree.Edge{}
-
-	for k, _ := range all {
-
-		if k == name {
-			ret[k] = all[k]
-			break
-		}
-
-	}
-	return ret
 }
 
 func mapToArr(m map[string]dtree.Node) []dtree.Node {
