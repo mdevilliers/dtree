@@ -1,0 +1,11 @@
+accepted:
+- MIT
+- Apache-2.0
+- NewBSD
+- MPL-2.0
+- FreeBSD
+- ISC
+
+unaccepted:
+- GPL-2.0
+- GPL-3.0
