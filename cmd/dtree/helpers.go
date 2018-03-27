@@ -79,7 +79,7 @@ func outputDot(fragment string, n []dtree.Node, e []dtree.Edge) error {
 
 	w.Flush()
 
-	fmt.Println(string(b.Bytes()))
+	fmt.Println(b.String())
 
 	return nil
 }

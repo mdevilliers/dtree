@@ -9,10 +9,6 @@ import (
 	"github.com/mdevilliers/dtree"
 )
 
-var (
-	relationshipStr = "relationship"
-)
-
 type glide struct{}
 
 type glideFile struct {
