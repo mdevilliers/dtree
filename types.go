@@ -1,5 +1,7 @@
 package dtree
 
+import "strings"
+
 type Node struct {
 	Name    string
 	Labels  Attributes
@@ -58,3 +60,41 @@ var (
 )
 
 type Attributes map[string]interface{}
+
+type Nodes []Node
+
+func (n Nodes) Predicate(value string) Nodes {
+
+	if value == "" {
+		return n
+	}
+
+	matching := Nodes{}
+
+	for _, nn := range n {
+		if strings.Contains(nn.Name, value) {
+			matching = append(matching, nn)
+		}
+	}
+
+	return matching
+}
+
+type Edges []Edge
+
+func (e Edges) Predicate(value string) Edges {
+
+	if value == "" {
+		return e
+	}
+
+	matching := Edges{}
+
+	for _, ee := range e {
+		if strings.Contains(ee.Source.Name, value) && strings.Contains(ee.Target.Name, value) {
+			matching = append(matching, ee)
+		}
+	}
+
+	return matching
+}

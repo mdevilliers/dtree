@@ -35,21 +35,23 @@ var grepCommand = &cobra.Command{
 			return err
 		}
 
-		nn := []dtree.Node{}
-		ee := []dtree.Edge{}
+		nn := dtree.Nodes{}
+		ee := dtree.Edges{}
 
 		for _, match := range matches {
 			if !_config.Reverse {
 				n, e := store.FromNode(match)
 				nn = append(nn, n...)
 				ee = append(ee, e...)
-
 			} else {
 				n, e := store.ToNode(match)
 				nn = append(nn, n...)
 				ee = append(ee, e...)
 			}
 		}
+
+		nn = nn.Predicate(_config.Predicate)
+		ee = ee.Predicate(_config.Predicate)
 
 		if _config.ToDot {
 			return outputDot(fragment, nn, ee)

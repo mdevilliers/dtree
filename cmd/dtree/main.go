@@ -15,10 +15,11 @@ var rootCmd = &cobra.Command{
 var _config = newConfig()
 
 type config struct {
-	Root    string `envconfig:"ROOT" default:"/home/mark/go/src/github.com/karhoo/"`
-	Reverse bool   `envconfig:"REVERSE" default:"false"`
-	ToDot   bool   `envconfig:"DOT" default:"false"`
-	ToSvg   bool   `envconfig:"SVG" default:"true"`
+	Root      string `envconfig:"ROOT" default:"/home/mark/go/src/github.com/karhoo/"`
+	Reverse   bool   `envconfig:"REVERSE" default:"false"`
+	ToDot     bool   `envconfig:"DOT" default:"false"`
+	ToSvg     bool   `envconfig:"SVG" default:"true"`
+	Predicate string `envconfig:"PREDICATE" default:""`
 }
 
 func newConfig() *config {
@@ -32,6 +33,7 @@ func (o *config) addFlags(fs *pflag.FlagSet) {
 	fs.BoolVarP(&o.Reverse, "reverse", "e", o.Reverse, "reverse the focus")
 	fs.BoolVarP(&o.ToDot, "dot", "d", o.ToDot, "output to dot file")
 	fs.BoolVarP(&o.ToSvg, "svg", "s", o.ToSvg, "output to svg (requires 'dot' installed)")
+	fs.StringVarP(&o.Predicate, "predicate", "p", o.Predicate, "trim responses to only include nodes and edges containing this value")
 	fs.Parse(os.Args)
 }
 
