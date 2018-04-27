@@ -14,6 +14,10 @@ var grepCommand = &cobra.Command{
 	Short: "grep for versions and dependancies of a package.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 
+		if len(args) == 0 {
+			return errors.New("specify a [TERM]")
+		}
+
 		store, err := initStore(_config)
 		if err != nil {
 			return err
