@@ -20,15 +20,15 @@ type Parser interface {
 // New returns a parser instance or an error
 func New(path string) (Parser, error) {
 
-	dep := dep{}
-	if dep.Test(path) {
-		return dep, nil
+	d := dep{}
+	if d.Test(path) {
+		return d, nil
 	}
 
-	glide := glide{}
+	g := glide{}
 
-	if glide.Test(path) {
-		return glide, nil
+	if g.Test(path) {
+		return g, nil
 	}
 
 	return nil, errors.New("parser not found")
