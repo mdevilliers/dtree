@@ -33,14 +33,14 @@ func NewNode(name, version string) Node {
 	}
 }
 
-func NewDependancy(source, target Node, version string) []Edge {
+func NewDependency(source, target Node, version string) []Edge {
 	return []Edge{
 		{
 			Source:       source,
 			Target:       target,
 			Labels:       Attributes{},
 			Version:      version,
-			Relationship: Dependancy,
+			Relationship: Dependency,
 		},
 		{
 			Source:       source,
@@ -56,7 +56,7 @@ type relationship string
 
 var (
 	Dependant  = relationship("dependent")
-	Dependancy = relationship("dependancy")
+	Dependency = relationship("dependency")
 )
 
 type Attributes map[string]interface{}

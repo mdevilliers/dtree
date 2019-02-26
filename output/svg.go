@@ -22,14 +22,16 @@ func ToDot(nodes []dtree.Node, edges []dtree.Edge, writer io.Writer) error {
 
 		fillcolor := "white"
 
-		if isAPI(node.Name) {
-			fillcolor = "blue"
-		} else if isSvc(node.Name) {
-			fillcolor = "red"
-		} else if isLib(node.Name) {
-			fillcolor = "green"
-		}
+		switch {
 
+		case isAPI(node.Name):
+			fillcolor = "blue"
+		case isSvc(node.Name):
+			fillcolor = "red"
+		case isLib(node.Name):
+			fillcolor = "green"
+
+		}
 		buf.WriteString(fmt.Sprintf(`"%s" [fillcolor=%s style=filled];`, node.Name, fillcolor))
 		buf.WriteByte('\n')
 	}

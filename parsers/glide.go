@@ -39,20 +39,20 @@ func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 		return nil, nil, err
 	}
 
-	glideFile := glideFile{}
+	gf := glideFile{}
 
-	err = yaml.Unmarshal([]byte(data), &glideFile)
+	err = yaml.Unmarshal([]byte(data), &gf)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot unmarshal data: %v", err)
 	}
 
-	root := dtree.RootNode(glideFile.Package)
+	root := dtree.RootNode(gf.Package)
 	nodes := []dtree.Node{root}
 
 	edges := []dtree.Edge{}
 
-	for _, p := range glideFile.Imports {
+	for _, p := range gf.Imports {
 
 		version := p.Version
 		if version == "" {
@@ -61,7 +61,7 @@ func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 		node := dtree.NewNode(p.Package, version)
 
-		pair := dtree.NewDependancy(root, node, version)
+		pair := dtree.NewDependency(root, node, version)
 
 		nodes = append(nodes, node)
 		edges = append(edges, pair...)

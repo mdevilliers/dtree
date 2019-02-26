@@ -66,7 +66,7 @@ func initStore(cfg *config) (storer, error) {
 	return store.InMemory(nodesArr, allEdges), nil
 }
 
-func outputDot(fragment string, n []dtree.Node, e []dtree.Edge) error {
+func outputDot(_ string, n []dtree.Node, e []dtree.Edge) error {
 
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)

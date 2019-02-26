@@ -40,8 +40,8 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 		return nil, nil, err
 	}
 
-	depFile := depFile{}
-	_, err = toml.Decode(string(data), &depFile)
+	df := depFile{}
+	_, err = toml.Decode(string(data), &df)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot unmarshal data: %v", err)
@@ -55,7 +55,7 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	edges := []dtree.Edge{}
 
-	for _, p := range depFile.Constraint {
+	for _, p := range df.Constraint {
 
 		version := p.Version
 		if version == "" {
@@ -64,7 +64,7 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 		node := dtree.NewNode(p.Name, version)
 
-		pair := dtree.NewDependancy(root, node, version)
+		pair := dtree.NewDependency(root, node, version)
 
 		nodes = append(nodes, node)
 		edges = append(edges, pair...)
