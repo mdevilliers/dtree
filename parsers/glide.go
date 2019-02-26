@@ -20,10 +20,6 @@ type glideImport struct {
 	Version string `json:"version"`
 }
 
-func Glide() glide {
-	return glide{}
-}
-
 func (glide) Test(pth string) bool {
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 	return fileExists(pathToGlideFile)
@@ -33,7 +29,7 @@ func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 
-	data, err := ioutil.ReadFile(pathToGlideFile)
+	data, err := ioutil.ReadFile(pathToGlideFile) // nolint: gosec
 
 	if err != nil {
 		return nil, nil, err
@@ -41,7 +37,7 @@ func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	gf := glideFile{}
 
-	err = yaml.Unmarshal([]byte(data), &gf)
+	err = yaml.Unmarshal(data, &gf)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot unmarshal data: %v", err)
@@ -56,7 +52,7 @@ func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 		version := p.Version
 		if version == "" {
-			version = "master"
+			version = master
 		}
 
 		node := dtree.NewNode(p.Package, version)

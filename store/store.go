@@ -11,7 +11,8 @@ type repo struct {
 	edges []dtree.Edge
 }
 
-func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo {
+// InMemory initilises an ephemeral store of source code information
+func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo { // nolint: golint
 	return &repo{nodes: nodes, edges: edges}
 }
 

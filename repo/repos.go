@@ -5,21 +5,15 @@ import (
 	"path"
 )
 
+// Repository encapsulates a golang source code repository.
 type Repository struct {
 	Path string
 }
 
-type from_disk struct {
-	root string
-}
+// FromCheckedOut returns a multiple Repository or an error
+func FromCheckedOut(root string) ([]Repository, error) {
 
-func FromCheckedOut(root string) from_disk {
-	return from_disk{root: root}
-}
-
-func (f from_disk) Paths() ([]Repository, error) {
-
-	files, err := ioutil.ReadDir(f.root)
+	files, err := ioutil.ReadDir(root)
 
 	if err != nil {
 		return nil, err
@@ -30,7 +24,7 @@ func (f from_disk) Paths() ([]Repository, error) {
 	for _, file := range files {
 
 		if file.IsDir() {
-			paths = append(paths, Repository{Path: path.Join(f.root, file.Name())})
+			paths = append(paths, Repository{Path: path.Join(root, file.Name())})
 		}
 	}
 

@@ -12,10 +12,6 @@ import (
 
 type dep struct{}
 
-func Dep() dep {
-	return dep{}
-}
-
 type depFile struct {
 	Constraint []depConstraint
 }
@@ -34,7 +30,7 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	pathToGoDepFile := path.Join(pth, "Gopkg.toml")
 
-	data, err := ioutil.ReadFile(pathToGoDepFile)
+	data, err := ioutil.ReadFile(pathToGoDepFile) // nolint: gosec
 
 	if err != nil {
 		return nil, nil, err
@@ -59,7 +55,7 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 		version := p.Version
 		if version == "" {
-			version = "master"
+			version = master
 		}
 
 		node := dtree.NewNode(p.Name, version)
