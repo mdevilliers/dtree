@@ -20,10 +20,6 @@ type glideImport struct {
 	Version string `json:"version"`
 }
 
-func Glide() glide {
-	return glide{}
-}
-
 func (glide) Test(pth string) bool {
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 	return fileExists(pathToGlideFile)
@@ -33,35 +29,35 @@ func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 
-	data, err := ioutil.ReadFile(pathToGlideFile)
+	data, err := ioutil.ReadFile(pathToGlideFile) // nolint: gosec
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	glideFile := glideFile{}
+	gf := glideFile{}
 
-	err = yaml.Unmarshal([]byte(data), &glideFile)
+	err = yaml.Unmarshal(data, &gf)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot unmarshal data: %v", err)
 	}
 
-	root := dtree.RootNode(glideFile.Package)
+	root := dtree.RootNode(gf.Package)
 	nodes := []dtree.Node{root}
 
 	edges := []dtree.Edge{}
 
-	for _, p := range glideFile.Imports {
+	for _, p := range gf.Imports {
 
 		version := p.Version
 		if version == "" {
-			version = "master"
+			version = master
 		}
 
 		node := dtree.NewNode(p.Package, version)
 
-		pair := dtree.NewDependancy(root, node, version)
+		pair := dtree.NewDependency(root, node, version)
 
 		nodes = append(nodes, node)
 		edges = append(edges, pair...)

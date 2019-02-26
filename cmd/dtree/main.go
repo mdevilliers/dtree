@@ -24,7 +24,12 @@ type config struct {
 
 func newConfig() *config {
 	c := &config{}
-	envconfig.Process("", c)
+	err := envconfig.Process("", c)
+
+	if err != nil {
+		panic(err)
+	}
+
 	return c
 }
 
@@ -34,15 +39,18 @@ func (o *config) addFlags(fs *pflag.FlagSet) {
 	fs.BoolVarP(&o.ToDot, "dot", "d", o.ToDot, "output to dot file")
 	fs.BoolVarP(&o.ToSvg, "svg", "s", o.ToSvg, "output to svg (requires 'dot' installed)")
 	fs.StringVarP(&o.Predicate, "predicate", "p", o.Predicate, "trim responses to only include nodes and edges containing this value")
-	fs.Parse(os.Args)
-}
+	err := fs.Parse(os.Args)
 
-func init() {
-	rootCmd.AddCommand(grepCommand)
-	_config.addFlags(rootCmd.PersistentFlags())
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
+
+	rootCmd.AddCommand(grepCommand)
+	_config.addFlags(rootCmd.PersistentFlags())
+
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(-1)
 	}

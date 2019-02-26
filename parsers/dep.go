@@ -12,10 +12,6 @@ import (
 
 type dep struct{}
 
-func Dep() dep {
-	return dep{}
-}
-
 type depFile struct {
 	Constraint []depConstraint
 }
@@ -34,14 +30,14 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	pathToGoDepFile := path.Join(pth, "Gopkg.toml")
 
-	data, err := ioutil.ReadFile(pathToGoDepFile)
+	data, err := ioutil.ReadFile(pathToGoDepFile) // nolint: gosec
 
 	if err != nil {
 		return nil, nil, err
 	}
 
-	depFile := depFile{}
-	_, err = toml.Decode(string(data), &depFile)
+	df := depFile{}
+	_, err = toml.Decode(string(data), &df)
 
 	if err != nil {
 		return nil, nil, fmt.Errorf("cannot unmarshal data: %v", err)
@@ -55,16 +51,16 @@ func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
 
 	edges := []dtree.Edge{}
 
-	for _, p := range depFile.Constraint {
+	for _, p := range df.Constraint {
 
 		version := p.Version
 		if version == "" {
-			version = "master"
+			version = master
 		}
 
 		node := dtree.NewNode(p.Name, version)
 
-		pair := dtree.NewDependancy(root, node, version)
+		pair := dtree.NewDependency(root, node, version)
 
 		nodes = append(nodes, node)
 		edges = append(edges, pair...)

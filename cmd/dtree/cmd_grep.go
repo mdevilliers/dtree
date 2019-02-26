@@ -58,7 +58,7 @@ var grepCommand = &cobra.Command{
 		} else if _config.ToSvg {
 			return outputSvg(fragment, nn, ee)
 		}
-		return errors.New("no output configured.")
+		return errors.New("no output configured")
 
 	},
 }

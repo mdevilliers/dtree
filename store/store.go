@@ -11,7 +11,8 @@ type repo struct {
 	edges []dtree.Edge
 }
 
-func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo {
+// InMemory initilises an ephemeral store of source code information
+func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo { // nolint: golint
 	return &repo{nodes: nodes, edges: edges}
 }
 
@@ -38,7 +39,7 @@ func (r *repo) FindNodes(name string) ([]dtree.Node, error) {
 // naughty
 var seen = map[string]bool{}
 
-//FromNode starts at this node and return all dependancies recursively
+//FromNode starts at this node and return all dependencies recursively
 func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 	nodes := map[string]dtree.Node{}
@@ -46,7 +47,7 @@ func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 	for _, e := range r.edges {
 
-		if e.Relationship == dtree.Dependancy && e.Source.Name == node.Name {
+		if e.Relationship == dtree.Dependency && e.Source.Name == node.Name {
 
 			nodes[e.Source.Name] = e.Source
 			nodes[e.Target.Name] = e.Target
@@ -74,7 +75,7 @@ func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 }
 
-// ToNode finds all dependancies looking at this node
+// ToNode finds all dependencies looking at this node
 func (r *repo) ToNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 	nodes := map[string]dtree.Node{}

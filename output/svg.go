@@ -9,32 +9,61 @@ import (
 	"github.com/mdevilliers/dtree"
 )
 
+// ToDot will write the tree of Nodes and Edges to the supplied io.Writer or return an error
 func ToDot(nodes []dtree.Node, edges []dtree.Edge, writer io.Writer) error {
 
 	buf := bytes.NewBuffer([]byte{})
-	buf.WriteString("digraph G {\n")
+	_, err := buf.WriteString("digraph G {\n")
+
+	if err != nil {
+		return err
+	}
 
 	for _, edge := range edges {
-		buf.WriteString(fmt.Sprintf(`"%s"->"%s" [ label="%s" ] ;`, edge.Source.Name, edge.Target.Name, edge.Version))
-		buf.WriteByte('\n')
+		_, err = buf.WriteString(fmt.Sprintf(`"%s"->"%s" [ label="%s" ] ;`, edge.Source.Name, edge.Target.Name, edge.Version))
+
+		if err != nil {
+			return err
+		}
+		err = buf.WriteByte('\n')
+
+		if err != nil {
+			return err
+		}
 	}
 	for _, node := range nodes {
 
 		fillcolor := "white"
 
-		if isAPI(node.Name) {
+		switch {
+
+		case isAPI(node.Name):
 			fillcolor = "blue"
-		} else if isSvc(node.Name) {
+		case isSvc(node.Name):
 			fillcolor = "red"
-		} else if isLib(node.Name) {
+		case isLib(node.Name):
 			fillcolor = "green"
+
+		}
+		_, err = buf.WriteString(fmt.Sprintf(`"%s" [fillcolor=%s style=filled];`, node.Name, fillcolor))
+
+		if err != nil {
+			return err
 		}
 
-		buf.WriteString(fmt.Sprintf(`"%s" [fillcolor=%s style=filled];`, node.Name, fillcolor))
-		buf.WriteByte('\n')
+		err = buf.WriteByte('\n')
+
+		if err != nil {
+			return err
+		}
 	}
-	buf.WriteString("}\n")
-	_, err := writer.Write(buf.Bytes())
+	_, err = buf.WriteString("}\n")
+
+	if err != nil {
+		return err
+	}
+
+	_, err = writer.Write(buf.Bytes())
 	return err
 }
 

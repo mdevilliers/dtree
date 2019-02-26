@@ -2,12 +2,13 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.10
+      - image: circleci/golang:1.11
+        environment:
+          GO111MODULE: "on"
     working_directory: /go/src/github.com/mdevilliers/dtree
     steps:
       - checkout
-      - run: make get-build-deps
-      - run: make megacheck
+      - run: make lint
       - run: make all
 
 workflows:

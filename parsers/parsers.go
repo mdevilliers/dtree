@@ -7,21 +7,28 @@ import (
 	"github.com/mdevilliers/dtree"
 )
 
-type parser interface {
+const (
+	master = "master"
+)
+
+// Parser will examis the provided path and return a collection
+// of Nodes and Edges or an error
+type Parser interface {
 	Parse(pth string) ([]dtree.Node, []dtree.Edge, error)
 }
 
-func New(path string) (parser, error) {
+// New returns a parser instance or an error
+func New(path string) (Parser, error) {
 
-	dep := Dep()
-	if dep.Test(path) {
-		return dep, nil
+	d := dep{}
+	if d.Test(path) {
+		return d, nil
 	}
 
-	glide := Glide()
+	g := glide{}
 
-	if glide.Test(path) {
-		return glide, nil
+	if g.Test(path) {
+		return g, nil
 	}
 
 	return nil, errors.New("parser not found")

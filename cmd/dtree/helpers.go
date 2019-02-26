@@ -25,7 +25,7 @@ type storer interface {
 
 func initStore(cfg *config) (storer, error) {
 
-	all, err := repo.FromCheckedOut(cfg.Root).Paths()
+	all, err := repo.FromCheckedOut(cfg.Root)
 
 	if err != nil {
 		return nil, err
@@ -66,7 +66,7 @@ func initStore(cfg *config) (storer, error) {
 	return store.InMemory(nodesArr, allEdges), nil
 }
 
-func outputDot(fragment string, n []dtree.Node, e []dtree.Edge) error {
+func outputDot(_ string, n []dtree.Node, e []dtree.Edge) error {
 
 	var b bytes.Buffer
 	w := bufio.NewWriter(&b)
@@ -77,7 +77,10 @@ func outputDot(fragment string, n []dtree.Node, e []dtree.Edge) error {
 		return err
 	}
 
-	w.Flush()
+	err = w.Flush()
+	if err != nil {
+		return err
+	}
 
 	fmt.Println(b.String())
 
@@ -92,7 +95,7 @@ func outputSvg(fragment string, n []dtree.Node, e []dtree.Edge) error {
 		return err
 	}
 
-	defer dotfile.Close()
+	defer dotfile.Close() // nolint  errcheck
 
 	err = output.ToDot(n, e, dotfile)
 
@@ -124,9 +127,12 @@ func outputSvg(fragment string, n []dtree.Node, e []dtree.Edge) error {
 }
 
 func executeCommand(cmd string) ([]byte, error) {
-	out, err := exec.Command("sh", "-c", cmd).Output()
+
+	out, err := exec.Command("sh", "-c", cmd).Output() // nolint: gosec
+
 	if err != nil {
 		return []byte{}, err
 	}
+
 	return out, nil
 }
