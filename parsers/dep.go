@@ -21,7 +21,7 @@ type depConstraint struct {
 	Version string
 }
 
-func (d dep) Test(pth string) bool {
+func (d dep) test(pth string) bool {
 	pathToGoDepFile := path.Join(pth, "Gopkg.toml")
 	return fileExists(pathToGoDepFile)
 }

@@ -21,13 +21,13 @@ type Parser interface {
 func New(path string) (Parser, error) {
 
 	d := dep{}
-	if d.Test(path) {
+	if d.test(path) {
 		return d, nil
 	}
 
 	g := glide{}
 
-	if g.Test(path) {
+	if g.test(path) {
 		return g, nil
 	}
 

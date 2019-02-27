@@ -20,7 +20,7 @@ type glideImport struct {
 	Version string `json:"version"`
 }
 
-func (glide) Test(pth string) bool {
+func (glide) test(pth string) bool {
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 	return fileExists(pathToGlideFile)
 }

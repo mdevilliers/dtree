@@ -14,7 +14,7 @@ type repo struct {
 
 // InMemory initilises an ephemeral store of source code information
 func InMemory(nodes dtree.Nodes, edges dtree.Edges) *repo { // nolint: golint
-	return &repo{nodes: nodes, edges: edges}
+	return &repo{nodes: nodes, edges: edges, seen: map[string]bool{}}
 }
 
 func (r *repo) FindNodes(name string) (dtree.Nodes, error) {
