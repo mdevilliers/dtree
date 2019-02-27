@@ -25,7 +25,7 @@ func (glide) Test(pth string) bool {
 	return fileExists(pathToGlideFile)
 }
 
-func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
+func (g glide) Parse(pth string) (dtree.Nodes, dtree.Edges, error) {
 
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 

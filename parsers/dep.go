@@ -26,7 +26,7 @@ func (d dep) Test(pth string) bool {
 	return fileExists(pathToGoDepFile)
 }
 
-func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
+func (d dep) Parse(pth string) (dtree.Nodes, dtree.Edges, error) {
 
 	pathToGoDepFile := path.Join(pth, "Gopkg.toml")
 

@@ -14,7 +14,7 @@ const (
 // Parser will examis the provided path and return a collection
 // of Nodes and Edges or an error
 type Parser interface {
-	Parse(pth string) ([]dtree.Node, []dtree.Edge, error)
+	Parse(pth string) (dtree.Nodes, dtree.Edges, error)
 }
 
 // New returns a parser instance or an error

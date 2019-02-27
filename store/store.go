@@ -9,16 +9,17 @@ import (
 type repo struct {
 	nodes []dtree.Node
 	edges []dtree.Edge
+	seen  map[string]bool
 }
 
 // InMemory initilises an ephemeral store of source code information
-func InMemory(nodes []dtree.Node, edges []dtree.Edge) *repo { // nolint: golint
+func InMemory(nodes dtree.Nodes, edges dtree.Edges) *repo { // nolint: golint
 	return &repo{nodes: nodes, edges: edges}
 }
 
-func (r *repo) FindNodes(name string) ([]dtree.Node, error) {
+func (r *repo) FindNodes(name string) (dtree.Nodes, error) {
 
-	matches := []dtree.Node{}
+	matches := dtree.Nodes{}
 
 	for _, n := range r.nodes {
 
@@ -36,11 +37,8 @@ func (r *repo) FindNodes(name string) ([]dtree.Node, error) {
 	return matches, nil
 }
 
-// naughty
-var seen = map[string]bool{}
-
 //FromNode starts at this node and return all dependencies recursively
-func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
+func (r *repo) FromNode(node dtree.Node) (dtree.Nodes, dtree.Edges) {
 
 	nodes := map[string]dtree.Node{}
 	edges := []dtree.Edge{}
@@ -54,7 +52,7 @@ func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 			edges = append(edges, e)
 
-			_, f := seen[e.Target.Name]
+			_, f := r.seen[e.Target.Name]
 
 			if !f {
 
@@ -66,8 +64,8 @@ func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 
 				edges = append(edges, e2...)
 
-				seen[e.Source.Name] = true
-				seen[e.Target.Name] = true
+				r.seen[e.Source.Name] = true
+				r.seen[e.Target.Name] = true
 			}
 		}
 	}
@@ -76,10 +74,10 @@ func (r *repo) FromNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 }
 
 // ToNode finds all dependencies looking at this node
-func (r *repo) ToNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
+func (r *repo) ToNode(node dtree.Node) (dtree.Nodes, dtree.Edges) {
 
 	nodes := map[string]dtree.Node{}
-	edges := []dtree.Edge{}
+	edges := dtree.Edges{}
 
 	for _, e := range r.edges {
 
@@ -93,9 +91,9 @@ func (r *repo) ToNode(node dtree.Node) ([]dtree.Node, []dtree.Edge) {
 	return mapToArr(nodes), edges
 }
 
-func mapToArr(m map[string]dtree.Node) []dtree.Node {
+func mapToArr(m map[string]dtree.Node) dtree.Nodes {
 
-	arr := []dtree.Node{}
+	arr := dtree.Nodes{}
 
 	for _, n := range m {
 		arr = append(arr, n)
