@@ -20,12 +20,12 @@ type glideImport struct {
 	Version string `json:"version"`
 }
 
-func (glide) Test(pth string) bool {
+func (glide) test(pth string) bool {
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 	return fileExists(pathToGlideFile)
 }
 
-func (g glide) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
+func (g glide) Parse(pth string) (dtree.Nodes, dtree.Edges, error) {
 
 	pathToGlideFile := path.Join(pth, "glide.yaml")
 

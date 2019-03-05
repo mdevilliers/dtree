@@ -21,12 +21,12 @@ type depConstraint struct {
 	Version string
 }
 
-func (d dep) Test(pth string) bool {
+func (d dep) test(pth string) bool {
 	pathToGoDepFile := path.Join(pth, "Gopkg.toml")
 	return fileExists(pathToGoDepFile)
 }
 
-func (d dep) Parse(pth string) ([]dtree.Node, []dtree.Edge, error) {
+func (d dep) Parse(pth string) (dtree.Nodes, dtree.Edges, error) {
 
 	pathToGoDepFile := path.Join(pth, "Gopkg.toml")
 

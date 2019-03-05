@@ -14,20 +14,20 @@ const (
 // Parser will examis the provided path and return a collection
 // of Nodes and Edges or an error
 type Parser interface {
-	Parse(pth string) ([]dtree.Node, []dtree.Edge, error)
+	Parse(pth string) (dtree.Nodes, dtree.Edges, error)
 }
 
 // New returns a parser instance or an error
 func New(path string) (Parser, error) {
 
 	d := dep{}
-	if d.Test(path) {
+	if d.test(path) {
 		return d, nil
 	}
 
 	g := glide{}
 
-	if g.Test(path) {
+	if g.test(path) {
 		return g, nil
 	}
 

@@ -18,9 +18,9 @@ import (
 )
 
 type storer interface {
-	FindNodes(str string) ([]dtree.Node, error)
-	FromNode(focus dtree.Node) ([]dtree.Node, []dtree.Edge)
-	ToNode(focus dtree.Node) ([]dtree.Node, []dtree.Edge)
+	FindNodes(str string) (dtree.Nodes, error)
+	FromNode(focus dtree.Node) (dtree.Nodes, dtree.Edges)
+	ToNode(focus dtree.Node) (dtree.Nodes, dtree.Edges)
 }
 
 func initStore(cfg *config) (storer, error) {
